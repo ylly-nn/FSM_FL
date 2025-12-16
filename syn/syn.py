@@ -97,99 +97,86 @@ def multiplicador(count):
 
 
 ##7 <выражение>::= <операнд>{<операции_группы_отношения> <операнд>}
-# 8 #do {1 8}
+# 8 {1 8}
 
 def expression(count):
-    logging.info("Проверка <выражение> ")
-    if operand(count)!=-1:
-        logging.info("Найден операнд: "+ str(lst_tokens[count])+" "+ str(count))
-        count+=1
 
-        if ratio(count)!=-1:
-            logging.info("Найдена опер_гр_отношения: "+ str(lst_tokens[count])+" "+ str(count))
-            count+=1
-
-            if operand(count)!=-1:
-                logging.info("Найден операнд: "+ str(lst_tokens[count])+" "+ str(count))
+    while True:
+        logging.info("Проверка <выражение> ")
+        err,count = operand(count)
+        #! count - следующий после операнда
+        if err!=-1:
+            # count - 1 чтобы вывести конец операнда
+            logging.info("Найден операнд: "+ str(lst_tokens[count-1])+" "+ str(count-1))
             
+
+            if ratio(count)!=-1:
+                logging.info("Найдена опер_гр_отношения: "+ str(lst_tokens[count])+" "+ str(count))
+                count+=1
+
             else:
-                logging.error("Ожидается операнд: "+ str(lst_tokens[count])+" "+ str(count))
-                syntax_errors.append("Ошибка в проверке <выражение>, ожидается операнд")
-                return -1, -1
+                logging.info("Конец проверки <выражение>")
+                return 0, count #! Следующий после проверенного
 
         else:
-            logging.info("Конец проверки <выражение>")
-            return 0, count
-
-    else:
-        logging.error("Ожидается операнд: "+ str(lst_tokens[count])+" "+ str(count))
-        syntax_errors.append("Ошибка в проверке <выражение>, ожидается операнд")
-        return -1, -1
+            logging.error("Ожидается операнд: "+ str(lst_tokens[count])+" "+ str(count))
+            syntax_errors.append("Ошибка в проверке <выражение>, ожидается операнд")
+            return -1, -1
 
 
 
 
 ##8.<операнд>::= <слагаемое> {<операции_группы_сложения> <слагаемое>}
-# 9 #do{2 9}
+# 9 {2 9}
 
 def operand(count):
     logging.info("Проверка <операнд>")
-    if addend(count)!=-1:
-        logging.info("Найдено слагаемое: "+ str(lst_tokens[count])+" "+ str(count))
-        count+=1
-
-        if summ(count)!=-1:
-            logging.info("Найдена опер_гр_сложения: "+ str(lst_tokens[count])+" "+ str(count))
-            count+=1
-
-            if addend(count)!=-1:
-                logging.info("Найдено слагаемое: "+ str(lst_tokens[count])+" "+ str(count))
+    while True:
+        err,count=addend(count)
+        #! count - следующий после слагаемого
+        if err!=-1:
+            # count - 1 чтобы вывести конец слагаемого
+            logging.info("Найдено слагаемое: "+ str(lst_tokens[count-1])+" "+ str(count-1)) 
             
+
+            if summ(count)!=-1:
+                logging.info("Найдена опер_гр_сложения: "+ str(lst_tokens[count])+" "+ str(count))
+                count+=1
+
             else:
-                logging.error("Ожидается слагаемое: "+ str(lst_tokens[count])+" "+ str(count))
-                syntax_errors.append("Ошибка в проверке <операнд>, ожидается слагаемое")
-                return -1, -1
+                logging.info("Конец проверки <операнд>")
+                return 0, count #! Следующий после проверенного
 
         else:
-            logging.info("Конец проверки <операнд>")
-            return 0, count
-
-    else:
-        logging.error("Ожидается слагаемое: "+ str(lst_tokens[count])+" "+ str(count))
-        syntax_errors.append("Ошибка в проверке <операнд>, ожидается слагаемое")
-        return -1, -1
+            logging.error("Ожидается слагаемое: "+ str(lst_tokens[count])+" "+ str(count))
+            syntax_errors.append("Ошибка в проверке <операнд>, ожидается слагаемое")
+            return -1, -1
 
 
 
 
 ##9. <слагаемое>::= <множитель> {<операции_группы_умножения> <множитель>}
-# 6 #do{3 6} - для более чем одного раза
+# 6 {3 6} 
 
 def addend(count):
-    logging.info("Проверка <слагаемое>")
-    if multiplicador(count)!=-1:
-        logging.info("Найден множитель: "+ str(lst_tokens[count])+" "+ str(count))
-        count+=1
+    while True:
+        logging.info("Проверка <слагаемое>")
 
-        if mult(count)!=-1:
-            logging.info("Найдена опер_гр_умн: "+ str(lst_tokens[count])+" "+ str(count))
+        if multiplicador(count)!=-1:
+            logging.info("Найден множитель: "+ str(lst_tokens[count])+" "+ str(count))
             count+=1
 
-            if multiplicador(count)!=-1:
-                logging.info("Найден множитель: "+ str(lst_tokens[count])+" "+ str(count))
-            
+            if mult(count)!=-1:
+                logging.info("Найдена опер_гр_умн: "+ str(lst_tokens[count])+" "+ str(count))
+                count+=1
             else:
-                logging.error("Ожидается множитель: "+ str(lst_tokens[count])+" "+ str(count))
-                syntax_errors.append("Ошибка в проверке <слагаемое>, ожидается множитель")
-                return -1, -1
-        else:
-            logging.info("Конец проверки <слагаемое>")
-            return 0, count
+                logging.info("Конец проверки <слагаемое>")
+                return 0, count #! Следующий после проверенного
 
-    if multiplicador(count)==-1:
-        logging.error("Ожидается множитель: "+ str(lst_tokens[count])+" "+ str(count))
-        syntax_errors.append("Ошибка в проверке <слагаемое>, ожидается множитель")
-        return -1
+        else:
+            logging.error("Ожидается множитель: "+ str(lst_tokens[count])+" "+ str(count))
+            syntax_errors.append("Ошибка в проверке <слагаемое>, ожидается множитель")
+            return -1, -1
     
 
 
@@ -221,9 +208,17 @@ def prorgam(count):
             if lst_tokens[count]==[1,18]:
                 logging.info("Найдено ':=' "+ str(lst_tokens[count])+" "+ str(count))
                 count+=1
-                res, count=opr_assignment(count)
-
-                if res==-1:
+                err, count = opr_assignment(count)
+                #!count - следующий после присваивания
+                if err!=-1:
+                    if lst_tokens[count]==[1,15]:
+                        logging.info("Найдено ';' "+ str(lst_tokens[count])+" "+ str(count))
+                        count+=1
+                    else:
+                        logging.error("Ожидается ';' "+ str(lst_tokens[count])+" "+ str(count))
+                        syntax_errors.append("Ошибка в проверке <программа>: Ожидается: ';'")
+                        return -1
+                if err==-1:
                     logging.error("Завершение анализа с ошибкой <присваивание>" )
                     return -1
 
@@ -231,8 +226,8 @@ def prorgam(count):
             ##11 - описание
             elif lst_tokens[count]==[1,17] or lst_tokens[count]== [1,16]:
                 logging.info("Найдено ',' или ':' "+ str(lst_tokens[count])+" "+ str(count))
-                res,count=descript(count) 
-                if res==-1:
+                err,count=descript(count) 
+                if err==-1:
                     logging.error("Завершение анализа с ошибкой <описание>" )
                     return -1
                 
@@ -273,16 +268,21 @@ def prorgam(count):
         elif lst_tokens[count]==[0,13]:
             logging.info("Вызоы opr_writeln() (writeln)")
             opr_writeln()
-        
+        elif lst_tokens[count]==[1,14]:
+            logging.info("Найдено '}', КОНЕЦ " +  str(lst_tokens[count])+" "+ str(count))
+            print("КОНЕЦ")
+            return 0
         else: 
             logging.error("Ожидается описание или оператор " + str(lst_tokens[count])+" "+ str(count))
             syntax_errors.append("Ошибка в проверке <программа>. Ожидается описание или оператор")
             return -1
+        print(count)
+        print(lst_tokens[count])
 
     
 
 ##11. <описание>::= <идентификатор> {, <идентификатор> } : <тип> ;}
-#do [2,?]{[1,17] [2,?]} [1,16] 12 [1,15]}
+# [2,?]{[1,17] [2,?]} [1,16] 12 [1,15]}
 
 def descript(count):
     logging.info("Проверка <описание>")
@@ -300,7 +300,7 @@ def descript(count):
                 if lst_tokens[count]==[1,15]:
                     logging.info("Найдено ';' "+str(lst_tokens[count])+" "+ str(count))
                     logging.info("Завершено без ошибок")
-                    return 0, count+1
+                    return 0, count+1 #! Следующий после проверенного
                 else:
                     logging.error("Ожидается: ';' "+ str(lst_tokens[count])+" "+ str(count))
                     syntax_errors.append("Ошибка проверки описания. Ожидается: ';'")
@@ -349,16 +349,20 @@ def opr_composite():
 
 
 ## 14. (оператор)<присваивания>::= <идентификатор> :=  <выражение>
-#do [2,?] [1,18] 7
+# [2,?] [1,18] 7
 
 def opr_assignment(count):
+    in_count=count
     logging.info("Проверка <оператор_присваивания> ")
-    if expression(count)!=-1:
-        logging.info("Найдено выражение " +str(lst_tokens[count])+" "+ str(count))
+    err, count = expression(count)
+    #! count - следующий после выражение
+    if err!=-1:
+        # count - 1 чтобы вывести конец слагаемого
+        logging.info("Найдено выражение " +str(lst_tokens[count-1])+" "+ str(count-1))
         logging.info("Конец проверки <присваивания>")
-        return 0, count+1
+        return 0, count #! - следующий после поверенного
     else:
-        logging.error("Ожидается выражение "+str(lst_tokens[count])+" "+ str(count))
+        logging.error("Ожидается выражение "+str(lst_tokens[in_count])+" "+ str(in_count))
         syntax_errors.append("Ошибка в проверке <присваивания>. Ожидается выражение ")
         return -1, -1
 
@@ -409,3 +413,10 @@ if not lst_err:
 if syntax_errors:
     print("❌ERRORS:")
     print(syntax_errors)
+
+
+
+
+
+
+
