@@ -1,4 +1,0 @@
-NUMBER TABLE(3):
-ID	NUMBER
------------------
-0	0b1
