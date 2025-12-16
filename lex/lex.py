@@ -246,10 +246,13 @@ print("=======================================")
     
 
 
+IDENT_PATH = os.path.join(BASE_DIR, "idents.txt")
+NUMBER_PATH = os.path.join(BASE_DIR, "numbers.txt")
+
 
 '''=================вывод=таблиц================'''
 # ===== IDENT TABLE =====
-with open("idents.txt", "w", encoding="utf-8") as f:
+with open(IDENT_PATH, "w", encoding="utf-8") as f:
     f.write("IDENT TABLE(2):\n")
     f.write("ID\tIDENT\n")
     f.write("-----------------\n")
@@ -261,7 +264,7 @@ with open("idents.txt", "w", encoding="utf-8") as f:
 
 
 # ===== NUMBER TABLE =====
-with open("numbers.txt", "w", encoding="utf-8") as f:
+with open(NUMBER_PATH, "w", encoding="utf-8") as f:
     f.write("NUMBER TABLE(3):\n")
     f.write("ID\tNUMBER\n")
     f.write("-----------------\n")

@@ -71,28 +71,62 @@ def logical(count):
     
 
 
-##6. <множитель>::= <идентификатор> | <число> | <логическая_константа> |<унарная_операция> <множитель> | « (»<выражение>«)»
-# [2,?] | [3,?] | 5 | #do 4 6 | [1,19] 7 [1,20]
+##6. <множитель>::= <идентификатор> | <число> | <логическая_константа> <унарная_операция> <множитель>| | « (»<выражение>«)»
+# [2,?] | [3,?] | 5 |  4 6 |  [1,19] 7 [1,20]
 
+#! возвращается count на котором закончился анализ
 def multiplicador(count):
     logging.info("Проверка <множитель>")
     
     if lst_tokens[count][0]==2:
         logging.info("Найден идентификатор "+ str(lst_tokens[count])+" "+ str(count))
-        return 0
+        return 0, count
     
     elif lst_tokens[count][0]==3:
         logging.info("Найдено число "+ str(lst_tokens[count])+" "+ str(count))
-        return 0
+        return 0, count
     
     elif logical(count)!=-1:
         logging.info("Найдена логическая константа "+ str(lst_tokens[count])+" "+ str(count))
-        return 0
-    
+        return 0, count
+    elif unary(count)!=-1:
+        logging.info("Найдено '~' "+ str(lst_tokens[count])+" "+ str(count))
+        count+=1
+        err, count=multiplicador(count)
+        if err!=-1:
+            logging.info("Найден множитель "+ str(lst_tokens[count])+" "+ str(count))
+            return 0, count
+        else:
+            logging.error(("Ожидается множитель "+ str(lst_tokens[count])+" "+ str(count)))
+            syntax_errors.append("Ошибка проверки <множитель> = ~ <множитель>. Ожидается множитель")
+            return -1, -1
+    elif lst_tokens[count]==[1,19]:
+        logging.info("Найдено '(' "+ str(lst_tokens[count])+" "+ str(count))
+        count+=1
+        err, count=expression(count)
+
+        if err!=-1:
+            logging.info("Найдено <выражение> "+ str(lst_tokens[count])+" "+ str(count))
+
+            if lst_tokens[count]==[1,20]:
+                logging.info("Найдено ')' "+ str(lst_tokens[count])+" "+ str(count))
+                return 0, count 
+                
+            else:
+                logging.error("Ожидается ')' "+ str(lst_tokens[count])+" "+ str(count))
+                syntax_errors.append("Ошибка проверки <множитель> = (выражение). Ожидается ')'")
+                return -1, -1
+
+        else:
+            logging.info("Ожидается <выражение> "+ str(lst_tokens[count-1])+" "+ str(count-1))
+            syntax_errors.append("Ошибка проверки <множитель> = (выражение). Ожидается выражение")
+            return -1, -1
+
+
     else:
-        logging.info("Не доделан множитель: " + str(lst_tokens[count])+" "+ str(count))
-        syntax_errors.append("Множитель пока проверяет иентификатор, число, лог_конст")
-        return -1
+        logging.info("Ошибка проверки <множитель> " + str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Ошибка проверки <множитель>")
+        return -1, -1
 
 
 
@@ -162,7 +196,8 @@ def addend(count):
     while True:
         logging.info("Проверка <слагаемое>")
 
-        if multiplicador(count)!=-1:
+        err, count = multiplicador(count)
+        if err!=-1:
             logging.info("Найден множитель: "+ str(lst_tokens[count])+" "+ str(count))
             count+=1
 
@@ -413,10 +448,5 @@ if not lst_err:
 if syntax_errors:
     print("❌ERRORS:")
     print(syntax_errors)
-
-
-
-
-
 
 

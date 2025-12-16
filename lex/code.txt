@@ -1,6 +1,5 @@
 {
-    A, B, C : %;
-    A:= 1 and 1;
+   A:= ~~(a)  a  );
 } 
 end if else for to step next while readln writeln true false begin
     NE EQ LT LE GT GE plus min or mult div and
@@ -34,5 +33,5 @@ end if else for to step next while readln writeln true false begin
 a:=a124h
 .1e2
 .1E2
-
+|<унарная_операция> <множитель> | « (»<выражение>«)»
 5244m
