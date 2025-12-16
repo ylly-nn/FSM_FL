@@ -1,0 +1,38 @@
+{
+    A := B mult B mult b;
+    
+} 
+end if else for to step next while readln writeln true false begin
+    NE EQ LT LE GT GE plus min or mult div and
+    ~:,:=()
+     %!$
+    a1_1, b, c : %
+   
+
+    A, B, C : %
+    X : !
+    Z : $
+    readln X, B
+
+    A := 124d
+    B:= 12E+2
+    C := A mult 32
+    Z := false
+
+    /* Enter the comment text in this line */
+
+    for A := 32d to C NE 130 step X LT 0F6h
+        if (A EQ 61d)
+            C := A mult 3d /* dfdf */
+            else C := 152d
+    next
+    next
+
+    while (X NE 39)
+        writeln A plus 613d, B mult 26d
+
+a:=a124h
+.1e2
+.1E2
+
+5244m

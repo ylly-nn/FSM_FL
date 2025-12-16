@@ -1,0 +1,6 @@
+IDENT TABLE(2):
+ID	IDENT
+-----------------
+0	A
+1	B
+2	b

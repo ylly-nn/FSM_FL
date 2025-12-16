@@ -1,0 +1,13 @@
+IDENT TABLE(2):
+ID	IDENT
+-----------------
+0	a1_1
+1	b
+2	c
+3	A
+4	B
+5	C
+6	X
+7	Z
+8	a
+9	a124h

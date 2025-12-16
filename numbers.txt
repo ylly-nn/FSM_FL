@@ -1,0 +1,3 @@
+NUMBER TABLE(3):
+ID	NUMBER
+-----------------
