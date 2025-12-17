@@ -1,6 +1,5 @@
-{
-   A:= ~~(a)  a  );
-} 
+
+{ 1 }
 end if else for to step next while readln writeln true false begin
     NE EQ LT LE GT GE plus min or mult div and
     ~:,:=()

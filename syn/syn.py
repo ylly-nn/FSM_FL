@@ -78,6 +78,7 @@ def logical(count):
 def multiplicador(count):
     logging.info("Проверка <множитель>")
     
+
     if lst_tokens[count][0]==2:
         logging.info("Найден идентификатор "+ str(lst_tokens[count])+" "+ str(count))
         return 0, count
@@ -89,6 +90,7 @@ def multiplicador(count):
     elif logical(count)!=-1:
         logging.info("Найдена логическая константа "+ str(lst_tokens[count])+" "+ str(count))
         return 0, count
+    
     elif unary(count)!=-1:
         logging.info("Найдено '~' "+ str(lst_tokens[count])+" "+ str(count))
         count+=1
@@ -100,6 +102,7 @@ def multiplicador(count):
             logging.error(("Ожидается множитель "+ str(lst_tokens[count])+" "+ str(count)))
             syntax_errors.append("Ошибка проверки <множитель> = ~ <множитель>. Ожидается множитель")
             return -1, -1
+        
     elif lst_tokens[count]==[1,19]:
         logging.info("Найдено '(' "+ str(lst_tokens[count])+" "+ str(count))
         count+=1
@@ -272,37 +275,25 @@ def prorgam(count):
                 logging.error("Ожидается: описание или присваивание")
                 syntax_errors.append("Ошибка в проверке <программа>: Ожидается: описание или присваивание")
 
-            '''13 - составной оператор'''
-        elif lst_tokens[count]==[0,3]:
-            logging.info("Вызов opr_composite() (begin)")
-            opr_composite()
-        
-            '''15 - условный оператор'''
-        elif lst_tokens[count]==[0,5]:
-            logging.info("Вызов opr_if() (if)")
-            opr_if()
-
-            '''16 - фиксированного цикла'''
-        elif lst_tokens[count]==[0,7]:
-            logging.info("Вызов opr_for (for)")
-            opr_for
-
-            '''17 - условного цикла'''
-        elif lst_tokens[count]==[0,11]:
-            logging.info("Вызов opr_while (while)")
-            opr_while()
-
-
-            '''18 - ввода'''
-        elif lst_tokens[count]==[0,12]:
-            logging.info("Вызов opr_readln() (readln)")
-            opr_readln()
-
-
-            '''19 -вывода'''
-        elif lst_tokens[count]==[0,13]:
-            logging.info("Вызоы opr_writeln() (writeln)")
-            opr_writeln()
+        elif lst_tokens[count]==[0,3] or lst_tokens[count]==[0,5] or lst_tokens[count]==[0,7] or lst_tokens[count]==[0,11] or lst_tokens[count]==[0,12] or lst_tokens[count]==[0,13]:
+            err, count = oper(count)
+             
+            if err!=-1:
+                logging.info("Найден <оператор> "+ str(lst_tokens[count])+" "+ str(count))
+            
+            else:
+                logging.error("Анализ оператора завершился с ошибкой")
+                syntax_errors.append("В проверка программа. Анализ оператора завершился с ошибкой")
+                return -1
+            
+            if lst_tokens[count]==[1,15]:
+                count+=1
+                logging.info("Найдено ';' "+ str(lst_tokens[count])+" "+ str(count))
+            else:
+                logging.error("Ожидается ';' "+ str(lst_tokens[count])+" "+ str(count))
+                syntax_errors.append("Ошибка в проверка программа. Ожидается ';'")
+                return -1
+    
         elif lst_tokens[count]==[1,14]:
             logging.info("Найдено '}', КОНЕЦ " +  str(lst_tokens[count])+" "+ str(count))
             print("КОНЕЦ")
@@ -366,7 +357,7 @@ def descript(count):
 
 
 ##12. <тип>::=  % | ! | $ 
-#do [0,0] | [0,1] | [0,2]
+# [0,0] | [0,1] | [0,2]
 
 def my_type(count):
     logging.info("Проверка <тип>")
@@ -405,22 +396,169 @@ def opr_assignment(count):
 ## 15. (оператор)<условный>::= if «(»<выражение>«)»<оператор> [else <оператор>]
 #do [0,5] [1,19] 7 [1,20] 13-19 [[0,6] 13-19]
 
-def opr_if():
+def opr_if(count):
     logging.info("Проверка <оператор_условный>")
+
+    ## (
+    if lst_tokens[count]==[1,19]:
+        logging.info("Найдено '(' "+str(lst_tokens[count])+" "+ str(count))
+    else:
+        logging.error("Ожидается '(' "+str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Ошибка проверки услового опреатора. Ожидается '('")
+        return -1, -1
+    
+    count+=1
+
+    ## выражение
+    err, count=expression(count)
+    if err!=-1:
+        logging.info("Найдено <выражение> "+ str(lst_tokens[count])+" "+ str(count))
+
+    else:
+        logging.info("Ожидается <выражение> "+ str(lst_tokens[count-1])+" "+ str(count-1))
+        syntax_errors.append("Ошибка проверки if. Ожидается выражение")
+        return -1, -1
+    
+    ## )
+
+    if lst_tokens[count]==[1,20]:
+        logging.info("Найдено ')' "+str(lst_tokens[count])+" "+ str(count))
+    else:
+        logging.error("Ожидается ')' "+str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Ошибка проверки услового опреатора. Ожидается ')'")
+        return -1, -1
+    
+    count+=1
+
+    ## оператор
+    err, count = oper(count)
+    if err !=-1:
+        logging.info("Найден оператор  "+str(lst_tokens[count-1])+" "+ str(count-1))
+    else:
+        logging.error("Ожидается оператор "+str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Ошибка проверки услового опреатора. Ожидается оператор")
+        return -1, -1
+    
+    ## [else оператор]
+
+    if lst_tokens[count]==[0,6]:
+        logging.info("Найдено 'else' " +str(lst_tokens[count])+" "+ str(count))
+
+        count+=1
+
+        err, count = oper(count)
+
+        if err!=-1:
+            logging.info("Найден оператор  "+str(lst_tokens[count-1])+" "+ str(count-1))
+            return 0, count
+        else:
+            logging.error("Ожидается оператор  "+str(lst_tokens[count])+" "+ str(count))
+            syntax_errors.append("Ошибка проверки услового опреатора. Ожидается оператор")
+            return -1, -1
+
+    else:
+        logging.info("Проверка  <оператор_условный> завершена")
+        return 0, count
+
+
+
+
+
+
 
 
 ## 16.<фиксированного_цикла>::= for <присваивания> to <выражение> [step <выражение>] <оператор> next
 #do [0,7] 14 [0,8] 7 [[0,9] 7] 13-19 [0,10]
 
-def opr_for():
+def opr_for(count):
+
     logging.info("Проверка <фиксированного_цикла>")
+    ## <идентификатор>:=
+    if lst_tokens[count][0]==2 and lst_tokens[count+1] == [1,18]:
+        logging.info("Найдено 'идентификатор := ' "+str(lst_tokens[count])+" "+ str(count))
+        count+=2
+    else:
+        logging.error("Ожидается <присваивания> "+str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Ошибка for. Ожидается оператор <присваивания>")
+        return -1, -1
+    
+    ## присваивания
+    err, count=opr_assignment(count)
+    if err!=-1:
+        logging.info("Найдено <присваивания> "+str(lst_tokens[count])+" "+ str(count))
+    else:
+        logging.error("Ожидается <присваивания> "+str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Ошибка for. Ожидается опреатор <присваивания>")
+        return -1, -1
+
+    ## to
+    if lst_tokens[count]==[0,8]:
+        logging.info("Найдено  'to' "+str(lst_tokens[count])+" "+ str(count))
+    else:
+        logging.error("Ожидается 'to'  "+str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Ошибка for. Ожидается 'to'")
+        return -1, -1
+    
+    count+=1
+
+    ## выражение
+    res,count=expression(count)
+    if res !=-1:
+        logging.info("Найдено  'выражение' "+str(lst_tokens[count])+" "+ str(count))
+    else:
+        logging.error("Ожидается выражение  "+str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Ошибка for. Ожидается выражение")
+        return -1, -1
+    
+    ##step
+    if lst_tokens[count]==[0,9]:
+        logging.info("Найдено 'step' " +str(lst_tokens[count])+" "+ str(count))
+        
+        count+=1
+        
+        ##выражение
+        err,count = expression(count)
+        if err!=-1:
+            logging.info("Найдено 'выражение' " +str(lst_tokens[count])+" "+ str(count))
+        else:
+            logging.error("Ожидается выражение  "+str(lst_tokens[count])+" "+ str(count))
+            syntax_errors.append("Ошибка проверки step <выражение>. Ожидается выражение")
+            return -1, -1
+    
+    err, count=oper(count)
+
+    ## оператор
+    if err!=-1:
+            logging.info("Найден оператор  "+str(lst_tokens[count-1])+" "+ str(count-1))
+    else:
+        logging.error("Ожидается оператор  "+str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Ошибка проверки фиксированного цикла. Ожидается оператор")
+        return -1, -1
+    
+    ## next
+    if lst_tokens[count]==[0,10]:
+        logging.info("Заершён анализ foor")
+        return 0, count+1
+    else:
+        logging.error("Ожмдается 'next' "+str(lst_tokens[count-1])+" "+ str(count-1))
+        syntax_errors.append("Ошибка проверки фиксированного цикла. Ожидается 'next'")
+        return -1, -1
+            
+
+
+    
+
+    
+    
+
 
 
 ## 17. <условного_цикла>::= while «(» <выражение>«)» <оператор>
 #do [0,11] [1,19] 7 [1,20] 13-19
 
-def opr_while():
+def opr_while(count):
     logging.info("Проверка <условного_цикла>")
+
 
 
 ## 18. (оператор) <ввода>::= readln <идентификатор> {, <идентификатор> }
@@ -436,6 +574,72 @@ def opr_readln():
 def opr_writeln():
     logging.info("Проверка <оператор_вывода>")
 
+def oper(count):
+    logging.info("Проверка операторы")
+
+    '''13 - составной оператор'''
+    if lst_tokens[count]==[0,3]:
+        logging.info("Найдено 'begin' "+str(lst_tokens[count])+" "+ str(count))
+        count+=1
+        err, count = opr_composite(count)
+        return err, count
+
+        '''14 - оператор присваивания'''
+    elif lst_tokens[count][0]==2 and lst_tokens[count+1]==[1,18]:
+        logging.info("Найдено <идентификатор>':=' "+str(lst_tokens[count])+" "+ str(count))
+        count+=2
+        err, count = opr_assignment(count)
+        return err, count
+
+        '''15 - условный оператор'''
+    elif lst_tokens[count]==[0,5]:
+        logging.info("Найдено 'if' "+ str(lst_tokens[count])+" "+ str(count))
+        count+=1
+        
+        err, count=opr_if(count)
+        
+        if err!=-1:
+            logging.info("Найден <оператор_условный> "+ str(lst_tokens[count])+" "+ str(count))
+            return err, count
+        else:
+            logging.info("Ожидается <оператор_условный> "+ str(lst_tokens[count])+" "+ str(count))
+            syntax_errors.append("Оператор if. Ожидается <оператор_условный")
+            return -1,-1
+        
+        
+
+        '''16 - фиксированного )цикла'''
+    elif lst_tokens[count]==[0,7]:
+        logging.info("Найдено 'for' "+ str(lst_tokens[count])+" "+ str(count))
+        count+=1
+        err, count=opr_for(count)
+        return err, count
+
+        '''17 - условного цикла'''
+    elif lst_tokens[count]==[0,11]:
+        logging.info("Найдено 'while' "+ str(lst_tokens[count])+" "+ str(count))
+        count+=1
+        err, count=opr_while(count)
+        return err, count
+
+
+        '''18 - ввода'''
+    elif lst_tokens[count]==[0,12]:
+        logging.info("Найдено 'readln' "+ str(lst_tokens[count])+" "+ str(count))
+        count+=1
+        err, count=opr_readln(count)
+        return err, count
+
+
+        '''19 -вывода'''
+    elif lst_tokens[count]==[0,13]:
+        logging.info("Найдено 'writeln' "+ str(lst_tokens[count])+" "+ str(count))
+        count+=1
+        err, count=opr_writeln(count)
+        return err, count
+    else:
+        logging.error("Как вообще сюда попало?")
+        return -1, count
 
 
 '''=====================main================================================='''
