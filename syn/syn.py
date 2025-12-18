@@ -20,7 +20,7 @@ syntax_errors=[]
 
 def ratio(count) :
     logging.info("Проверка <операции_группы_отношения>")
-    if lst_tokens[count]==[1,0] or lst_tokens[count]==[1,2] or lst_tokens[count]==[1,3] or lst_tokens[count]==[1,4] or lst_tokens[count]==[1,5]:
+    if lst_tokens[count]==[1,0] or lst_tokens[count]==[1,1] or lst_tokens[count]==[1,2] or lst_tokens[count]==[1,3] or lst_tokens[count]==[1,4] or lst_tokens[count]==[1,5]:
         return 0
     else:
         return -1
@@ -540,7 +540,7 @@ def opr_for(count):
         logging.info("Заершён анализ foor")
         return 0, count+1
     else:
-        logging.error("Ожмдается 'next' "+str(lst_tokens[count-1])+" "+ str(count-1))
+        logging.error("Ожидается 'next' "+str(lst_tokens[count-1])+" "+ str(count-1))
         syntax_errors.append("Ошибка проверки фиксированного цикла. Ожидается 'next'")
         return -1, -1
             
@@ -559,20 +559,103 @@ def opr_for(count):
 def opr_while(count):
     logging.info("Проверка <условного_цикла>")
 
+    ## (
+    if lst_tokens[count]==[1,19]:
+        logging.info("Найдено '('  "+str(lst_tokens[count])+" "+ str(count))
+    else:
+        logging.error("Ожидается '('  "+str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Ошибка проверки <условного_цикла>. Ожидается '('")
+        return -1, -1
+    
+    count+=1
+
+    ##  <выражение>
+    err, count = expression(count)
+
+    if err!=-1:
+        logging.info("Найдено 'выражение'  "+str(lst_tokens[count])+" "+ str(count))
+    else:
+        logging.error("Ожидается 'выражение'  "+str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Ошибка проверки <условного_цикла>. Ожидается 'выражение'")
+        return -1, -1
+    
+    
+    ## )
+    if lst_tokens[count]==[1,20]:
+        logging.info("Найдено ')'  "+str(lst_tokens[count])+" "+ str(count))
+    else:
+        logging.error("Ожидается ')'  "+str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Ошибка проверки <условного_цикла>. Ожидается ')'")
+        return -1, -1
+    
+    count+=1
+
+    ## <опрератор>
+    err, count = oper(count)
+    if err!=-1:
+        logging.info("Найден 'оператор'  "+str(lst_tokens[count])+" "+ str(count))
+        logging.info("Завершена проверка <условного_цикла>")
+        return 0, count
+    else:
+        logging.error("Ожидается 'оператор'  "+str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Ошибка проверки <условного_цикла>. Ожидается 'оператор'")
+        return -1, -1
+
+
+
+
 
 
 ## 18. (оператор) <ввода>::= readln <идентификатор> {, <идентификатор> }
 #do [0,12] [2,?] {[1,17] [2,?]}
 
-def opr_readln():
+def opr_readln(count):
     logging.info("Проверка <оператор_ввода>")
+
+    while True:
+        ## идентификатор
+        if lst_tokens[count][0]==2:
+            logging.info("Найден 'идентификатор'  "+str(lst_tokens[count])+" "+ str(count))
+        else:
+            logging.error("Ожидается 'идентификатор'  "+str(lst_tokens[count])+" "+ str(count))
+            syntax_errors.append("Ошибка проверки <оператор_ввода>. Ожидается 'идентификатор'")
+            return -1, -1
+        
+        count+=1
+
+        ## ,
+        if lst_tokens[count]==[1,17]:
+            logging.info("Найдено ','  "+str(lst_tokens[count])+" "+ str(count))
+            count+=1
+        else:
+            logging.info("Конец проверки <оператор_ввода>  "+str(lst_tokens[count])+" "+ str(count))
+            return 0, count
 
 
 ## 19. (оператор) <вывода>::= writeln <выражение> {, <выражение> }
 #do [0,13] 7 {[1,17] 7}
 
-def opr_writeln():
+def opr_writeln(count):
     logging.info("Проверка <оператор_вывода>")
+
+    while True:
+        err, count = expression(count)
+
+        ## <выражение>
+        if err!=-1:
+            logging.info("Найдено 'выражение'  "+str(lst_tokens[count])+" "+ str(count))
+        else:
+            logging.error("Ожидается 'выражение'  "+str(lst_tokens[count])+" "+ str(count))
+            syntax_errors.append("Ошибка проверки <оператор_вывода>. Ожидается 'выражение'")
+            return -1, -1
+        
+        ## ,
+        if lst_tokens[count] == [1,17]:
+            logging.info("Найдено ','  "+str(lst_tokens[count])+" "+ str(count))
+            count+=1
+        else:
+            logging.info("Конец проверки <оператор_вывода>  "+str(lst_tokens[count])+" "+ str(count))
+            return 0, count
 
 def oper(count):
     logging.info("Проверка операторы")
