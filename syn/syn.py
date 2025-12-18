@@ -15,6 +15,8 @@ logging.basicConfig(
 syntax_errors=[]
 
 
+
+
 ##1. <операции_группы_отношения>::= NE | EQ | LT| LE | GT | GE 
 # [1,0] | [1,1] | [1,2] | [1,3] | [1,4] | [1,5]
 
@@ -100,6 +102,7 @@ def multiplicador(count):
             return 0, count
         else:
             logging.error(("Ожидается множитель "+ str(lst_tokens[count])+" "+ str(count)))
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
             syntax_errors.append("Ошибка проверки <множитель> = ~ <множитель>. Ожидается множитель")
             return -1, -1
         
@@ -117,17 +120,20 @@ def multiplicador(count):
                 
             else:
                 logging.error("Ожидается ')' "+ str(lst_tokens[count])+" "+ str(count))
+                syntax_errors.append("Строка: " + str(lst_lines[count-1]))
                 syntax_errors.append("Ошибка проверки <множитель> = (выражение). Ожидается ')'")
                 return -1, -1
 
         else:
             logging.info("Ожидается <выражение> "+ str(lst_tokens[count-1])+" "+ str(count-1))
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
             syntax_errors.append("Ошибка проверки <множитель> = (выражение). Ожидается выражение")
             return -1, -1
 
 
     else:
         logging.info("Ошибка проверки <множитель> " + str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка проверки <множитель>")
         return -1, -1
 
@@ -157,6 +163,8 @@ def expression(count):
 
         else:
             logging.error("Ожидается операнд: "+ str(lst_tokens[count])+" "+ str(count))
+            if count!=-1:
+                syntax_errors.append("Строка: " + str(lst_lines[count-1]))
             syntax_errors.append("Ошибка в проверке <выражение>, ожидается операнд")
             return -1, -1
 
@@ -186,6 +194,8 @@ def operand(count):
 
         else:
             logging.error("Ожидается слагаемое: "+ str(lst_tokens[count])+" "+ str(count))
+            if count!=-1:
+                syntax_errors.append("Строка: " + str(lst_lines[count-1]))
             syntax_errors.append("Ошибка в проверке <операнд>, ожидается слагаемое")
             return -1, -1
 
@@ -213,6 +223,8 @@ def addend(count):
 
         else:
             logging.error("Ожидается множитель: "+ str(lst_tokens[count])+" "+ str(count))
+            if count!=-1:
+                syntax_errors.append("Строка: " + str(lst_lines[count-1]))
             syntax_errors.append("Ошибка в проверке <слагаемое>, ожидается множитель")
             return -1, -1
     
@@ -231,7 +243,7 @@ def prorgam(count):
         logging.info("Найдено начало: { "+ str(lst_tokens[count])+" "+ str(count))
         count+=1
     else:
-        syntax_errors.append("Не найдено начало программы: { "+ str(lst_tokens[count])+" "+ str(count))
+        syntax_errors.append("Не найдено начало программы: { ")
         logging.error("не найдено {")
         return -1
     
@@ -254,6 +266,8 @@ def prorgam(count):
                         count+=1
                     else:
                         logging.error("Ожидается ';' "+ str(lst_tokens[count])+" "+ str(count))
+                        if count!=-1:
+                            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
                         syntax_errors.append("Ошибка в проверке <программа>: Ожидается: ';'")
                         return -1
                 if err==-1:
@@ -273,6 +287,8 @@ def prorgam(count):
                 
             else:
                 logging.error("Ожидается: описание или присваивание")
+                if count!=-1:
+                    syntax_errors.append("Строка: " + str(lst_lines[count-1]))
                 syntax_errors.append("Ошибка в проверке <программа>: Ожидается: описание или присваивание")
 
         elif lst_tokens[count]==[0,3] or lst_tokens[count]==[0,5] or lst_tokens[count]==[0,7] or lst_tokens[count]==[0,11] or lst_tokens[count]==[0,12] or lst_tokens[count]==[0,13]:
@@ -283,7 +299,9 @@ def prorgam(count):
             
             else:
                 logging.error("Анализ оператора завершился с ошибкой")
-                syntax_errors.append("В проверка программа. Анализ оператора завершился с ошибкой")
+                if count!=-1:
+                    syntax_errors.append("Строка: " + str(lst_lines[count-1]))
+                syntax_errors.append("В проверка <программа> aнализ оператора завершился с ошибкой")
                 return -1
             
             if lst_tokens[count]==[1,15]:
@@ -291,6 +309,8 @@ def prorgam(count):
                 logging.info("Найдено ';' "+ str(lst_tokens[count])+" "+ str(count))
             else:
                 logging.error("Ожидается ';' "+ str(lst_tokens[count])+" "+ str(count))
+                if count!=-1:
+                    syntax_errors.append("Строка: " + str(lst_lines[count-1]))
                 syntax_errors.append("Ошибка в проверка программа. Ожидается ';'")
                 return -1
     
@@ -300,10 +320,11 @@ def prorgam(count):
             return 0
         else: 
             logging.error("Ожидается описание или оператор " + str(lst_tokens[count])+" "+ str(count))
+            if count!=-1:
+                syntax_errors.append("Строка: " + str(lst_lines[count-1]))
             syntax_errors.append("Ошибка в проверке <программа>. Ожидается описание или оператор")
             return -1
-        print(count)
-        print(lst_tokens[count])
+        
 
     
 
@@ -329,11 +350,15 @@ def descript(count):
                     return 0, count+1 #! Следующий после проверенного
                 else:
                     logging.error("Ожидается: ';' "+ str(lst_tokens[count])+" "+ str(count))
+                    if count!=-1:
+                        syntax_errors.append("Строка: " + str(lst_lines[count-1]))
                     syntax_errors.append("Ошибка проверки описания. Ожидается: ';'")
                     return -1, -1
                 
             else:
                 logging.error("Ожидается тип "+str(lst_tokens[count])+" "+ str(count))
+                if count!=-1:
+                    syntax_errors.append("Строка: " + str(lst_lines[count-1]))
                 syntax_errors.append("Ошибка проверки описания. Ожидается тип")
                 return -1, -1
             
@@ -347,10 +372,14 @@ def descript(count):
                 count+=1
             else:
                 logging.error("Ожидается идентификатор "+str(lst_tokens[count])+" "+ str(count))
+                if count!=-1:
+                    syntax_errors.append("Строка: " + str(lst_lines[count-1]))
                 syntax_errors.append("Ошибка проверки описания. Ожидается идентификатор")
                 return -1, -1
         else:
             logging.error("Ожидается ',' или ':' "+str(lst_tokens[count])+" "+ str(count))
+            if count!=-1:
+                syntax_errors.append("Строка: " + str(lst_lines[count-1]))
             syntax_errors.append("Ошибка проверки описания. Ожидается ',' или ':'")
             print(lst_tokens[count])
             return -1, -1
@@ -370,8 +399,37 @@ def my_type(count):
 ## 13. (оператор)<составной>::= begin <оператор> { ; <оператор> } end
 #do [0,3] 13-19 {[1,15] 13-19} [0,4]
 
-def opr_composite():
+def opr_composite(count):
     logging.info("Проверка <оператор_составной>")
+    flag=True
+    while flag == True: 
+        err, count= oper(count)
+        if err !=-1:
+            logging.info("Найден 'оператор' "+ str(lst_tokens[count])+" "+ str(count))
+        else:
+            logging.error("Ожидается 'оператор' "+str(lst_tokens[count])+" "+ str(count))
+            if count!=-1:
+                syntax_errors.append("Строка: " + str(lst_lines[count-1]))
+            syntax_errors.append("Ошибка проверки оператора <составной>. Ожидается 'оператор'")
+            return -1, -1
+        
+        if lst_tokens[count]== [1,15]:
+            logging.info("Найдено ';' "+ str(lst_tokens[count])+" "+ str(count))
+            count+=1
+        
+        else:
+            flag = False
+    
+    if lst_tokens[count] == [0,4]:
+        logging.info("Найдено 'end' "+ str(lst_tokens[count])+" "+ str(count))
+        return 0, count+1
+    else:
+        logging.error("Ожидается 'end' "+str(lst_tokens[count])+" "+ str(count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
+        syntax_errors.append("Ошибка проверки оператора <составной>. Ожидается 'end'")
+        return -1, -1
+    
 
 
 ## 14. (оператор)<присваивания>::= <идентификатор> :=  <выражение>
@@ -389,6 +447,8 @@ def opr_assignment(count):
         return 0, count #! - следующий после поверенного
     else:
         logging.error("Ожидается выражение "+str(lst_tokens[in_count])+" "+ str(in_count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка в проверке <присваивания>. Ожидается выражение ")
         return -1, -1
 
@@ -404,6 +464,8 @@ def opr_if(count):
         logging.info("Найдено '(' "+str(lst_tokens[count])+" "+ str(count))
     else:
         logging.error("Ожидается '(' "+str(lst_tokens[count])+" "+ str(count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка проверки услового опреатора. Ожидается '('")
         return -1, -1
     
@@ -416,6 +478,8 @@ def opr_if(count):
 
     else:
         logging.info("Ожидается <выражение> "+ str(lst_tokens[count-1])+" "+ str(count-1))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка проверки if. Ожидается выражение")
         return -1, -1
     
@@ -425,6 +489,8 @@ def opr_if(count):
         logging.info("Найдено ')' "+str(lst_tokens[count])+" "+ str(count))
     else:
         logging.error("Ожидается ')' "+str(lst_tokens[count])+" "+ str(count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))  
         syntax_errors.append("Ошибка проверки услового опреатора. Ожидается ')'")
         return -1, -1
     
@@ -436,6 +502,8 @@ def opr_if(count):
         logging.info("Найден оператор  "+str(lst_tokens[count-1])+" "+ str(count-1))
     else:
         logging.error("Ожидается оператор "+str(lst_tokens[count])+" "+ str(count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка проверки услового опреатора. Ожидается оператор")
         return -1, -1
     
@@ -453,6 +521,8 @@ def opr_if(count):
             return 0, count
         else:
             logging.error("Ожидается оператор  "+str(lst_tokens[count])+" "+ str(count))
+            if count!=-1:
+                syntax_errors.append("Строка: " + str(lst_lines[count-1]))
             syntax_errors.append("Ошибка проверки услового опреатора. Ожидается оператор")
             return -1, -1
 
@@ -479,6 +549,8 @@ def opr_for(count):
         count+=2
     else:
         logging.error("Ожидается <присваивания> "+str(lst_tokens[count])+" "+ str(count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка for. Ожидается оператор <присваивания>")
         return -1, -1
     
@@ -488,6 +560,8 @@ def opr_for(count):
         logging.info("Найдено <присваивания> "+str(lst_tokens[count])+" "+ str(count))
     else:
         logging.error("Ожидается <присваивания> "+str(lst_tokens[count])+" "+ str(count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка for. Ожидается опреатор <присваивания>")
         return -1, -1
 
@@ -496,6 +570,8 @@ def opr_for(count):
         logging.info("Найдено  'to' "+str(lst_tokens[count])+" "+ str(count))
     else:
         logging.error("Ожидается 'to'  "+str(lst_tokens[count])+" "+ str(count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка for. Ожидается 'to'")
         return -1, -1
     
@@ -507,6 +583,8 @@ def opr_for(count):
         logging.info("Найдено  'выражение' "+str(lst_tokens[count])+" "+ str(count))
     else:
         logging.error("Ожидается выражение  "+str(lst_tokens[count])+" "+ str(count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка for. Ожидается выражение")
         return -1, -1
     
@@ -522,6 +600,8 @@ def opr_for(count):
             logging.info("Найдено 'выражение' " +str(lst_tokens[count])+" "+ str(count))
         else:
             logging.error("Ожидается выражение  "+str(lst_tokens[count])+" "+ str(count))
+            if count!=-1:
+                syntax_errors.append("Строка: " + str(lst_lines[count-1]))
             syntax_errors.append("Ошибка проверки step <выражение>. Ожидается выражение")
             return -1, -1
     
@@ -532,6 +612,8 @@ def opr_for(count):
             logging.info("Найден оператор  "+str(lst_tokens[count-1])+" "+ str(count-1))
     else:
         logging.error("Ожидается оператор  "+str(lst_tokens[count])+" "+ str(count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка проверки фиксированного цикла. Ожидается оператор")
         return -1, -1
     
@@ -541,6 +623,8 @@ def opr_for(count):
         return 0, count+1
     else:
         logging.error("Ожидается 'next' "+str(lst_tokens[count-1])+" "+ str(count-1))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка проверки фиксированного цикла. Ожидается 'next'")
         return -1, -1
             
@@ -564,6 +648,8 @@ def opr_while(count):
         logging.info("Найдено '('  "+str(lst_tokens[count])+" "+ str(count))
     else:
         logging.error("Ожидается '('  "+str(lst_tokens[count])+" "+ str(count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка проверки <условного_цикла>. Ожидается '('")
         return -1, -1
     
@@ -576,6 +662,8 @@ def opr_while(count):
         logging.info("Найдено 'выражение'  "+str(lst_tokens[count])+" "+ str(count))
     else:
         logging.error("Ожидается 'выражение'  "+str(lst_tokens[count])+" "+ str(count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка проверки <условного_цикла>. Ожидается 'выражение'")
         return -1, -1
     
@@ -585,6 +673,8 @@ def opr_while(count):
         logging.info("Найдено ')'  "+str(lst_tokens[count])+" "+ str(count))
     else:
         logging.error("Ожидается ')'  "+str(lst_tokens[count])+" "+ str(count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка проверки <условного_цикла>. Ожидается ')'")
         return -1, -1
     
@@ -598,6 +688,8 @@ def opr_while(count):
         return 0, count
     else:
         logging.error("Ожидается 'оператор'  "+str(lst_tokens[count])+" "+ str(count))
+        if count!=-1:
+            syntax_errors.append("Строка: " + str(lst_lines[count-1]))
         syntax_errors.append("Ошибка проверки <условного_цикла>. Ожидается 'оператор'")
         return -1, -1
 
@@ -618,6 +710,8 @@ def opr_readln(count):
             logging.info("Найден 'идентификатор'  "+str(lst_tokens[count])+" "+ str(count))
         else:
             logging.error("Ожидается 'идентификатор'  "+str(lst_tokens[count])+" "+ str(count))
+            if count!=-1:
+                syntax_errors.append("Строка: " + str(lst_lines[count-1]))
             syntax_errors.append("Ошибка проверки <оператор_ввода>. Ожидается 'идентификатор'")
             return -1, -1
         
@@ -646,6 +740,8 @@ def opr_writeln(count):
             logging.info("Найдено 'выражение'  "+str(lst_tokens[count])+" "+ str(count))
         else:
             logging.error("Ожидается 'выражение'  "+str(lst_tokens[count])+" "+ str(count))
+            if count!=-1:
+                syntax_errors.append("Строка: " + str(lst_lines[count-1]))
             syntax_errors.append("Ошибка проверки <оператор_вывода>. Ожидается 'выражение'")
             return -1, -1
         
@@ -686,6 +782,8 @@ def oper(count):
             return err, count
         else:
             logging.info("Ожидается <оператор_условный> "+ str(lst_tokens[count])+" "+ str(count))
+            if count!=-1:
+                syntax_errors.append("Строка: " + str(lst_lines[count-1]))
             syntax_errors.append("Оператор if. Ожидается <оператор_условный")
             return -1,-1
         
@@ -734,6 +832,18 @@ if not lst_err:
 
 if syntax_errors:
     print("❌ERRORS:")
-    print(syntax_errors)
+
+    total = len(syntax_errors)-1
+    print (syntax_errors[0])
+    for i, err in enumerate(reversed(syntax_errors), start=1):
+        if i < total:
+            print(err, ":")
+        else:
+            print(err)
+            break
+        
+
+
+
 
 

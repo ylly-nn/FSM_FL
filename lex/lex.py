@@ -75,6 +75,7 @@ def _replace_block_comment(match: re.Match) -> str:
 
 TOKEN_REGEX = r'(:=|[%!$~{}\[\];:,\(\)]|[^ \t\n%!$~{}\[\];:,\(\)]+)'
 lst_tokens=[] ##сисок токенов для дальнейшего анализа
+lst_lines=[]## Список для отображения ошибки в линии
 lst_err=[] ##cписок ошибок
 tokens_list_print = [] ##для печати список токено
 
@@ -196,6 +197,7 @@ for count, line in enumerate(lines, start=1):
         for token in new_tokens:
             if token[0]!=-1:
                 lst_tokens.append(token)
+                lst_lines.append(count)
             else:
                 lst_err.append(token)
 

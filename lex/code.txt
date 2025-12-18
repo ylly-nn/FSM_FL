@@ -1,38 +1,36 @@
 
-{ 
-    writeln A, A, b, b EQ b;
+{    a, b, c : %;
+    x : !;
+    flag : $;
+    i : %;
+
+    readln a, b;
+
+    c := (a mult b) plus 10;
+    writeln c;
+
+    flag := true;
+
+    if ((c GT 100) and flag) begin
+        writeln c;
+        x := ~a
+    end else begin
+        writeln 0;
+        flag := false
+    end;
+
+    for i := 0 to 10 step 2 begin
+        a := a plus i;
+        writeln a
+    end next;
+
+    while (a LT b) begin
+        a := a plus 1
+    end;
+
+    writeln (a EQ b);
+    writeln (a NE b);
+    writeln (a LE b);
+    writeln (a GE b);
+    
 }
-end if else for to step next while readln writeln true false begin
-    NE EQ LT LE GT GE plus min or mult div and
-    ~:,:=()
-     %!$
-    a1_1, b, c : %
-   
-
-    A, B, C : %
-    X : !
-    Z : $
-    readln X, B
-
-    A := 124d
-    B:= 12E+2
-    C := A mult 32
-    Z := false
-
-    /* Enter the comment text in this line */
-
-    for A := 32d to C NE 130 step X LT 0F6h
-        if (A EQ 61d)
-            C := A mult 3d /* dfdf */
-            else C := 152d
-    next
-    next
-
-    while (X NE 39)
-        writeln A plus 613d, B mult 26d
-
-a:=a124h
-.1e2
-.1E2
-|<унарная_операция> <множитель> | « (»<выражение>«)»
-5244m
