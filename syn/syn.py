@@ -1,4 +1,5 @@
 from lex.lex import *
+from sem.sem import *
 import logging
 
 BASE_DIR = os.path.dirname(__file__)
@@ -13,7 +14,6 @@ logging.basicConfig(
 )
 
 syntax_errors=[]
-
 
 
 
@@ -83,6 +83,7 @@ def multiplicador(count):
 
     if lst_tokens[count][0]==2:
         logging.info("Найден идентификатор "+ str(lst_tokens[count])+" "+ str(count))
+        add_used_var(count, lst_tokens[count])
         return 0, count
     
     elif lst_tokens[count][0]==3:
@@ -152,7 +153,6 @@ def expression(count):
             # count - 1 чтобы вывести конец операнда
             logging.info("Найден операнд: "+ str(lst_tokens[count-1])+" "+ str(count-1))
             
-
             if ratio(count)!=-1:
                 logging.info("Найдена опер_гр_отношения: "+ str(lst_tokens[count])+" "+ str(count))
                 count+=1
@@ -235,6 +235,7 @@ def addend(count):
 # [1,13] {/ (11|13-19) [1,15] /} [1,14]
 
 def prorgam(count):
+    
     logging.info("Проверка <программа>")
 
     '''Поиск начала программы'''
@@ -251,11 +252,13 @@ def prorgam(count):
         ''' 11 - описание + 14 - присваивание'''
         if lst_tokens[count][0]==2:
             logging.info("Найден идентификатор: "+ str(lst_tokens[count])+" "+ str(count))
+            
 
             count+=1
 
             '''14 - присваивание'''
             if lst_tokens[count]==[1,18]:
+                add_used_var(count, lst_tokens[count-1])
                 logging.info("Найдено ':=' "+ str(lst_tokens[count])+" "+ str(count))
                 count+=1
                 err, count = opr_assignment(count)
@@ -333,7 +336,8 @@ def prorgam(count):
 
 def descript(count):
     logging.info("Проверка <описание>")
-
+    add_dec_var(count-1, lst_tokens[count-1], "")
+    start_count=count-1
     while True:
         ##если ':'
         if lst_tokens[count]==[1,16]:
@@ -342,6 +346,18 @@ def descript(count):
             count+=1
             if my_type(count)!=-1:
                 logging.info("Найден тип " +str(lst_tokens[count])+" "+ str(count))
+
+                #!Семантический
+                if lst_tokens[count]==[0,0]:
+                    var_type="%"
+                elif lst_tokens[count]==[0,1]:
+                    var_type="!"
+                elif lst_tokens[count]==[0,2]:
+                    var_type="$"
+
+                for token_count in range(start_count, count):
+                    if lst_tokens[token_count][0]==2:
+                        update_type_by_count(token_count, var_type)
                 count+=1
 
                 if lst_tokens[count]==[1,15]:
@@ -369,6 +385,7 @@ def descript(count):
 
             if lst_tokens[count][0]==2:
                 logging.info("Найден идентификатор "+ str(lst_tokens[count])+" "+ str(count))
+                add_dec_var(count, lst_tokens[count], "")
                 count+=1
             else:
                 logging.error("Ожидается идентификатор "+str(lst_tokens[count])+" "+ str(count))
@@ -546,6 +563,7 @@ def opr_for(count):
     ## <идентификатор>:=
     if lst_tokens[count][0]==2 and lst_tokens[count+1] == [1,18]:
         logging.info("Найдено 'идентификатор := ' "+str(lst_tokens[count])+" "+ str(count))
+        add_used_var(count, lst_tokens[count])
         count+=2
     else:
         logging.error("Ожидается <присваивания> "+str(lst_tokens[count])+" "+ str(count))
@@ -708,6 +726,7 @@ def opr_readln(count):
         ## идентификатор
         if lst_tokens[count][0]==2:
             logging.info("Найден 'идентификатор'  "+str(lst_tokens[count])+" "+ str(count))
+            add_used_var(count, lst_tokens[count])
         else:
             logging.error("Ожидается 'идентификатор'  "+str(lst_tokens[count])+" "+ str(count))
             if count!=-1:
@@ -766,6 +785,7 @@ def oper(count):
         '''14 - оператор присваивания'''
     elif lst_tokens[count][0]==2 and lst_tokens[count+1]==[1,18]:
         logging.info("Найдено <идентификатор>':=' "+str(lst_tokens[count])+" "+ str(count))
+        add_used_var(count, lst_tokens[count])
         count+=2
         err, count = opr_assignment(count)
         return err, count
@@ -843,8 +863,10 @@ if syntax_errors:
             break
         
 
+existence_var()
 
+if semantic_errors:
+    semantic_errors.sort(key=lambda e: e[0])
+    for error in semantic_errors:
+        print(error)
 
-
-
-print(lst_tokens)

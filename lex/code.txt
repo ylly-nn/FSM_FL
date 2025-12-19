@@ -1,8 +1,10 @@
 
-{    a, b, c : %;
+{   a:=1;
+    a:=b;
+    a, c, b : %;
     x : !;
     flag : $;
-    i : %;
+    i, flag : %;
 
     readln a, b;
 
@@ -11,7 +13,7 @@
 
     flag := true;
 
-    if ((c GT 100) and flag) begin
+    if (a:=1) begin
         writeln c;
         x := ~a
     end else begin
@@ -27,6 +29,7 @@
     while (a LT b) begin
         a := a plus 1
     end;
+    g:=1;
 
     writeln (a EQ b);
     writeln (a NE b);

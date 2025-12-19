@@ -5,6 +5,11 @@ from .num import *
 
 ident_table = {}  # {имя: номер}
 
+def ident_name_by_id(id_num: int):
+    for name, idx in ident_table.items():
+        if idx == id_num:
+            return name
+    return None
 
 ## Добавляется идентификатор если его нет, возвращается номер
 def identifier_add(name: str):
@@ -133,7 +138,7 @@ for count, line in enumerate(lines, start=1):
                 
 
             ## Начинается c 0,1
-            if re.match(r'[0-9]', token):
+            if re.match(r'[0-1]', token):
                 if e_with_dot(token)!=-1:
                     new_tokens[i]=e_with_dot(token)
                 elif e_not_dot(token)!=-1:
