@@ -1,6 +1,6 @@
 
-{   a:=1;
-    a:=b;
+{   a:=1 plus 2 mult 2 mult ~1 div (1 plus 4 min 2);
+    a:=b NE 2 plus 2 mult 2;
     a, c, b : %;
     x : !;
     flag : $;
@@ -13,7 +13,7 @@
 
     flag := true;
 
-    if (a:=1) begin
+    if (a EQ 1) begin
         writeln c;
         x := ~a
     end else begin
@@ -21,19 +21,10 @@
         flag := false
     end;
 
-    for i := 0 to 10 step 2 begin
-        a := a plus i;
-        writeln a
-    end next;
+    for i:=1 to 2 step 1 a:=2 next;
 
-    while (a LT b) begin
-        a := a plus 1
-    end;
-    g:=1;
-
-    writeln (a EQ b);
-    writeln (a NE b);
-    writeln (a LE b);
-    writeln (a GE b);
+    readln a, b, c;
+ 
     
 }
+

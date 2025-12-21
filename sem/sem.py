@@ -1,63 +1,50 @@
 from lex.lex import *
+from dataclasses import dataclass, field
+from typing import Any, ClassVar, List, Optional
 ##объявленные переменные
-dec_var = {}
-
-semantic_errors=[]
-
-def add_dec_var(count: int, token: list, var_type: str):
-    for info in dec_var.values():
-        if info["token"] == token:
-            token=ident_name_by_id(token[1])
-            semantic_errors.append([lst_lines[count], ("Переменная: " + str(token) + " уже объявлена")])
-            return
-
-    dec_var[count] = {
-        "token": token,
-        "type": var_type,
-    }
-    
-
-def update_type_by_count(count: int, new_type: str):
-    if count not in dec_var:
-        #raise Exception("Запись с таким count не найдена")
-        return
-
-    dec_var[count]["type"] = new_type
 
 
+@dataclass
+class AST:
+    _counter: ClassVar[int] = 0   # общий счётчик для всех узлов
 
-# update_type_by_count(4, "!")
-# update_type_by_count(5, "%")
+    kind: str
+    value: Any = None
+    children: list["AST"] = field(default_factory=list)
 
-# print(dec_var)
+    count_kind: int = field(init=False)
+
+    def __post_init__(self):
+        self.count_kind = AST._counter
+        AST._counter += 1
+        
+
+def swap_ratio_with_next(ast_node):
+    """
+    Меняет местами каждого ребёнка с kind == "ratio" со следующим ребёнком.
+    Пример: [operand, ratio, operand] -> [operand, operand, ratio]
+    """
+    if ast_node is None or not hasattr(ast_node, "children"):
+        return ast_node
+
+    i = 0
+    while i < len(ast_node.children) - 1:
+        child = ast_node.children[i]
+
+        # kind может отсутствовать у некоторых объектов
+        if hasattr(child, "kind") and child.kind == "ratio":
+            ast_node.children[i], ast_node.children[i + 1] = (
+                ast_node.children[i + 1],
+                ast_node.children[i],
+            )
+            i += 2  # пропускаем следующий, чтобы не менять обратно
+        else:
+            i += 1
+
+    return ast_node
 
 
-used_var = {}
-
-def add_used_var(count:int, token: list):
-    used_var[count]={
-        "token": token,
-    }
-
-def has_declared_token(token: list) -> int:
-    for count in dec_var:
-        dec_token=dec_var[count]["token"]
-        if dec_token==token:
-            return 0, count
-    return -1,-1
-
-
-## Исползование необъявленной переменной
-def existence_var():
-    # список уникальных использований: [{token, count}]
-    for count in used_var:
-        token=used_var[count]["token"]
-        err, dec_count =  has_declared_token(token)
-        if err==-1:
-            token=ident_name_by_id(token[1])
-            semantic_errors.append([lst_lines[count],("Использование необъявленной переменной: "+ str(token))])
-        elif count<dec_count:
-            token=ident_name_by_id(token[1])
-            semantic_errors.append([lst_lines[count],("Переменая используется раньше объявления: "+ str(token))])
-
+a = AST("ident", [1,2])
+b = AST("num", 1)
+c = AST("binop", "+", [a, b])
 
