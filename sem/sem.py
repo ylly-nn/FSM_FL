@@ -1,7 +1,8 @@
 from lex.lex import *
 from dataclasses import dataclass, field
-from typing import Any, ClassVar, List, Optional
-##объявленные переменные
+from typing import Any, ClassVar, Iterable
+
+semantic_err=[]
 
 
 @dataclass
@@ -11,6 +12,7 @@ class AST:
     kind: str
     value: Any = None
     children: list["AST"] = field(default_factory=list)
+    line: int | None = None
 
     count_kind: int = field(init=False)
 
@@ -19,32 +21,43 @@ class AST:
         AST._counter += 1
         
 
-def swap_ratio_with_next(ast_node):
+
+dec_var={}
+
+def add_dec_var(var_name: str, var_type: str) -> int:
+    if var_name in dec_var:
+        return -1
+
+    dec_var[var_name] = var_type
+    return 0
+
+def walk_ast(root: AST) -> Iterable[AST]:
     """
-    Меняет местами каждого ребёнка с kind == "ratio" со следующим ребёнком.
-    Пример: [operand, ratio, operand] -> [operand, operand, ratio]
+    DFS-обход дерева AST (preorder): сначала узел, потом его дети слева направо.
     """
-    if ast_node is None or not hasattr(ast_node, "children"):
-        return ast_node
-
-    i = 0
-    while i < len(ast_node.children) - 1:
-        child = ast_node.children[i]
-
-        # kind может отсутствовать у некоторых объектов
-        if hasattr(child, "kind") and child.kind == "ratio":
-            ast_node.children[i], ast_node.children[i + 1] = (
-                ast_node.children[i + 1],
-                ast_node.children[i],
-            )
-            i += 2  # пропускаем следующий, чтобы не менять обратно
-        else:
-            i += 1
-
-    return ast_node
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        yield node
+        # чтобы дети шли слева направо — пушим в стек в обратном порядке
+        for child in reversed(node.children):
+            stack.append(child)
 
 
-a = AST("ident", [1,2])
-b = AST("num", 1)
-c = AST("binop", "+", [a, b])
+def semantic_analysis(ast_program):
+    for node in walk_ast(ast_program):
+
+        ## объвление переменных
+        if node.kind == "descript":
+            ast_type = node.children[-1]
+
+            for child in node.children[:-1]:
+                if child.kind == "ident":
+                    res = add_dec_var(child.value[1], ast_type.value)
+
+                    ## Объявлена ли 1 раз?
+                    if res==-1:
+                        name=ident_name_by_id(child.value[1])
+                        semantic_err.append("Строка: "+ str(child.line)+". Переменная "+ str(name)+ " уже объявлена")
+                    
 

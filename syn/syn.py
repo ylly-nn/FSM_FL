@@ -1,5 +1,7 @@
 from lex.lex import *
 from sem.sem import *
+
+
 import logging
 
 BASE_DIR = os.path.dirname(__file__)
@@ -34,7 +36,7 @@ ast_program=AST("program")
 def ratio(count) :
     logging.info("Проверка <операции_группы_отношения>")
     if lst_tokens[count]==[1,0] or lst_tokens[count]==[1,1] or lst_tokens[count]==[1,2] or lst_tokens[count]==[1,3] or lst_tokens[count]==[1,4] or lst_tokens[count]==[1,5]:
-        ast_ratio=AST("ratio", lst_tokens[count])
+        ast_ratio=AST("ratio", lst_tokens[count], line=lst_lines[count])
         return 0, ast_ratio
     else:
         return -1, -1
@@ -47,7 +49,7 @@ def ratio(count) :
 def summ(count):
     logging.info("Проверка <операции_группы_сложения>")
     if lst_tokens[count] == [1,6] or lst_tokens[count] == [1,7] or lst_tokens[count] == [1,8]:
-        ast_sum=AST("sum", lst_tokens[count])
+        ast_sum=AST("sum", lst_tokens[count], line=lst_lines[count])
         return 0, ast_sum
     else:
         return -1, -1
@@ -59,7 +61,7 @@ def summ(count):
 def mult(count):
     logging.info("Проверка <операции_группы_умножения>")
     if lst_tokens[count]==[1,9] or lst_tokens[count]==[1,10] or lst_tokens[count]==[1,11]:
-        ast_mult=AST("mult", lst_tokens[count])
+        ast_mult=AST("mult", lst_tokens[count], line=lst_lines[count])
         return 0, ast_mult
     else:
         return -1, -1
@@ -70,7 +72,7 @@ def mult(count):
 def unary(count):
     logging.info("Проверка <унарная_операция>")
     if lst_tokens[count]==[1,12]:
-        ast_unary=AST("unary", lst_tokens[count])
+        ast_unary=AST("unary", lst_tokens[count], line=lst_lines[count])
         return 0, ast_unary
     else:
         return -1, -1
@@ -82,7 +84,7 @@ def unary(count):
 def logical(count):
     logging.info("Проверка <логическая_константа>")
     if lst_tokens[count] == [0,14] or lst_tokens[count] == [0,15]:
-        ast_logical=AST("logical", lst_tokens[count])
+        ast_logical=AST("logical", lst_tokens[count], line=lst_lines[count])
         return 0, ast_logical
     else:
         return -1, -1
@@ -99,13 +101,12 @@ def multiplicador(count):
 
     if lst_tokens[count][0]==2:
         logging.info("Найден идентификатор "+ str(lst_tokens[count])+" "+ str(count))
-        #add_used_var(count, lst_tokens[count])
-        ast_multiplicador=AST("ident", lst_tokens[count])
+        ast_multiplicador=AST("ident", lst_tokens[count], line=lst_lines[count])
         return 0, count, ast_multiplicador
     
     if lst_tokens[count][0]==3:
         logging.info("Найдено число "+ str(lst_tokens[count])+" "+ str(count))
-        ast_multiplicador=AST("num", lst_tokens[count])
+        ast_multiplicador=AST("num", lst_tokens[count], line=lst_lines[count])
         return 0, count, ast_multiplicador
     
     err, ast_logical=logical(count)
@@ -397,7 +398,7 @@ def descript(count):
                 for token_count in range(start_count, count):
                     if lst_tokens[token_count][0]==2:
                         #update_type_by_count(token_count, var_type)
-                        ast_descript.children.append(AST("ident", lst_tokens[token_count]))
+                        ast_descript.children.append(AST("ident", lst_tokens[token_count], line=lst_lines[count]))
         
                 ast_descript.children.append(ast_type)
                 
@@ -452,7 +453,7 @@ def descript(count):
 def my_type(count):
     logging.info("Проверка <тип>")
     if lst_tokens[count]==[0,1] or lst_tokens[count]==[0,2] or lst_tokens[count]==[0,0]:
-        ast_type=AST("type", lst_tokens[count])
+        ast_type=AST("type", lst_tokens[count], line=lst_lines[count])
         return 0, ast_type
     else:
         return -1, -1
@@ -500,7 +501,7 @@ def opr_composite(count):
 # [2,?] [1,18] 7
 
 def opr_assignment(count):
-    ast_assigment=AST("assigment", lst_tokens[count-2])
+    ast_assigment=AST("assigment", lst_tokens[count-2], line=lst_lines[count-2])
     in_count=count
     logging.info("Проверка <оператор_присваивания> ")
     err, count, ast_expression = expression(count)
@@ -792,7 +793,7 @@ def opr_readln(count):
         ## идентификатор
         if lst_tokens[count][0]==2:
             logging.info("Найден 'идентификатор'  "+str(lst_tokens[count])+" "+ str(count))
-            ast_readln.children.append(AST("ident", lst_tokens[count]))
+            ast_readln.children.append(AST("ident", lst_tokens[count], line=lst_lines[count]))
             #add_used_var(count, lst_tokens[count])
         else:
             logging.error("Ожидается 'идентификатор'  "+str(lst_tokens[count])+" "+ str(count))
@@ -973,7 +974,7 @@ def print_ast(node, prefix="", is_last=True):
 
     branch = "└─ " if is_last else "├─ "
     if node.value is not None:
-        print(prefix + branch + f"{node.kind}: {node.value}")
+        print(prefix + branch + f"{node.kind}: {node.value}, {node.line}")
     else:
         print(prefix + branch + f"{node.kind}")
 
@@ -985,3 +986,10 @@ def print_ast(node, prefix="", is_last=True):
 
 print("AST")
 print_ast(ast_program)
+
+semantic_analysis(ast_program)
+
+for err in semantic_err:
+    print(err)
+
+print(dec_var)

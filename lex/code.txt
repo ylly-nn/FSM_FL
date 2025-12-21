@@ -1,7 +1,7 @@
 
 {   a:=1 plus 2 mult 2 mult ~1 div (1 plus 4 min 2);
     a:=b NE 2 plus 2 mult 2;
-    a, c, b : %;
+    a, a, c, b : %;
     x : !;
     flag : $;
     i, flag : %;
