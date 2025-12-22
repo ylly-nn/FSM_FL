@@ -19,14 +19,6 @@ syntax_errors=[]
 
 ast_program=AST("program")
 
-# descript = AST("descript")
-
-# descript.children.append(AST("ident", "a"))
-# descript.children.append(AST("ident", "b"))
-
-# node.children.append(descript)
-# node.children.append(descript)
-
 
 
 
@@ -972,20 +964,7 @@ else:
 
 ## красивая печать дерева 
 
-def print_ast(node, prefix="", is_last=True):
-    if node is None:
-        return
 
-    branch = "└─ " if is_last else "├─ "
-    if node.value is not None:
-        print(prefix + branch + f"{node.kind}: {node.value}, {node.line}")
-    else:
-        print(prefix + branch + f"{node.kind}")
-
-    new_prefix = prefix + ("   " if is_last else "│  ")
-
-    for i, child in enumerate(node.children):
-        print_ast(child, new_prefix, i == len(node.children) - 1)
 
 
 
@@ -1003,6 +982,7 @@ if not syntax_errors:
         for err in semantic_err:
             print(err)
 
-    # print("AST")
-    # print_ast(ast_program)
+   
+
+
 

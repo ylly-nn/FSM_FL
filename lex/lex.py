@@ -5,6 +5,8 @@ from .num import *
 
 ident_table = {}  # {имя: номер}
 
+
+
 def ident_name_by_id(id_num: int):
     for name, idx in ident_table.items():
         if idx == id_num:

@@ -5,6 +5,11 @@ number_table = {}   # {число: номер}
 """Числа хрянятся в таблице в двоичном представлении
 вещественные числа хранятся согдасно стандарту IEEE 754"""
 
+def number_get(num_id: int):
+    for value_str, info in number_table.items():
+        if info["id"] == num_id:
+            return value_str
+    return -1
 
 ##Если числа нет, добавляется в таблицу. Возврат номер в таблице
 def number_add(value: str):
