@@ -1,11 +1,12 @@
 
-{   a:=1 plus 2 mult 2 mult ~1 div (1 plus 4 min 2);
-    a:=b NE 2 plus 2 mult 2;
-    a, a, c, b : %;
+{   
+    a, c, b : %;
     x : !;
     flag : $;
-    i, flag : %;
+    i: %;
 
+    a:=1 plus 2 mult 2 mult ~1 div (1 plus 4 min 2);
+    a:=b NE 2 plus 2 mult 2;
     readln a, b;
 
     c := (a mult b) plus 10;
@@ -20,7 +21,6 @@
         writeln 0;
         flag := false
     end;
-
     for i:=1 to 2 step 1 a:=2 next;
 
     readln a, b, c;

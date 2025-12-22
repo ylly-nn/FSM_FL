@@ -58,6 +58,10 @@ def semantic_analysis(ast_program):
                     ## Объявлена ли 1 раз?
                     if res==-1:
                         name=ident_name_by_id(child.value[1])
-                        semantic_err.append("Строка: "+ str(child.line)+". Переменная "+ str(name)+ " уже объявлена")
-                    
+                        semantic_err.append("Строка: "+ str(child.line)+". Переменная уже объявлена: "+ str(name))
 
+
+        if node.kind=="ident" or node.kind=="assigment":
+            if not(node.value[1] in dec_var):
+                name=ident_name_by_id(node.value[1])
+                semantic_err.append("Строка: "+ str(node.line)+" Используется необъявленная переменная: "+ str(name))

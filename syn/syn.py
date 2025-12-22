@@ -359,7 +359,6 @@ def prorgam(count):
     
         elif lst_tokens[count]==[1,14]:
             logging.info("Найдено '}', КОНЕЦ " +  str(lst_tokens[count])+" "+ str(count))
-            print("КОНЕЦ")
             return 0
         else: 
             logging.error("Ожидается описание или оператор " + str(lst_tokens[count])+" "+ str(count))
@@ -957,6 +956,11 @@ if syntax_errors:
         else:
             print(err)
             break
+else:
+    print("===========================================")
+    print("✅Syntactic analysis completed successfully")
+    print("===========================================")
+
         
 
 #existence_var()
@@ -984,12 +988,21 @@ def print_ast(node, prefix="", is_last=True):
         print_ast(child, new_prefix, i == len(node.children) - 1)
 
 
-print("AST")
-print_ast(ast_program)
 
-semantic_analysis(ast_program)
+if not syntax_errors:
+   
 
-for err in semantic_err:
-    print(err)
+    semantic_analysis(ast_program)
 
-print(dec_var)
+    if not semantic_err:
+        print("==========================================")
+        print("✅Semantic analysis completed successfully")
+        print("==========================================")
+    else:
+        print("❌ERRORS:")
+        for err in semantic_err:
+            print(err)
+
+    # print("AST")
+    # print_ast(ast_program)
+
