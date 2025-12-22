@@ -152,7 +152,7 @@ def expression(node):
             
         if [1, 1] not in lst_ratio:
             if "$" in ratio.values():
-                semantic_err.append("Несовпадение типов для операции группы сравнения(не EQ):$")
+                semantic_err.append("Строка:"+ str(node.line)+".Несовпадение типов для операции группы сравнения(не EQ):$")
     
     return node
 
@@ -301,6 +301,9 @@ def semantic_analysis(ast_program):
                     if res==-1:
                         name=ident_name_by_id(child.value[1])
                         semantic_err.append("Строка:"+ str(child.line)+". Переменная уже объявлена: "+ str(name))
+        elif node.kind=="expression" and node.ast_type==None:
+            node=expression(node)
+
        
         ## присваивание
         elif node.kind=="assigment":
@@ -317,8 +320,35 @@ def semantic_analysis(ast_program):
                     semantic_err.append("Строка:"+ str(node.line)+". Несовпадение типов: "+ str(node.ast_type)+":="+str(node.children[0].ast_type))
                 if node.ast_type=="!" and node.children[0].ast_type=="$":
                     semantic_err.append("Строка:"+ str(node.line)+". Несовпадение типов: "+ str(node.ast_type)+":="+str(node.children[0].ast_type))
+
         
-        
+    for node in walk_ast(ast_program):
+        ## if
+        if node.kind=="if":
+            if node.children[0].ast_type!="$":
+                semantic_err.append("Строка:"+ str(node.line)+". Неверный тип для условия if: "+ str(node.children[0].ast_type)+". Требуется $")
+
+        ## for
+        if node.kind=="for":
+            if node.children[0].ast_type!="%":
+                semantic_err.append("Строка:"+ str(node.line)+". Неверный тип для начального значения for:"+ str(node.children[0].ast_type)+". Требуется %")
+            if node.children[1].ast_type!="%":
+                semantic_err.append("Строка:"+ str(node.line)+". Неверный тип для конечного значения for:"+ str(node.children[0].ast_type)+". Требуется %")
+            if node.children[2].kind=="step":
+                ast_step=node.children[2]
+                node.children[2].ast_type=ast_step.children[0].ast_type
+                if ast_step.ast_type!= "%":
+                    semantic_err.append("Строка:"+ str(node.line)+". Неверный тип для шага значения for:"+ str(ast_step.ast_type)+". Требуется %")
+
+            
+        ## while
+        if node.kind=="while":
+            if node.children[0].ast_type!="$":
+                semantic_err.append("Строка:"+ str(node.line)+". Неверный тип для условия while:"+ str(node.children[0].ast_type)+". Требуется $")
+
+
+
+
 
     
 

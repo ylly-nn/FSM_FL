@@ -160,7 +160,7 @@ def multiplicador(count):
 # 8 {1 8}
 
 def expression(count):
-    ast_expression=AST("expression")
+    ast_expression=AST("expression", line=lst_lines[count-1])
     while True:
         logging.info("Проверка <выражение> ")
         err, count, ast_operand = operand(count)
@@ -516,7 +516,7 @@ def opr_assignment(count):
 # [0,5] [1,19] 7 [1,20] 13-19 [[0,6] 13-19]
 
 def opr_if(count):
-    ast_if=AST("if")
+    ast_if=AST("if", line=lst_lines[count-1])
     logging.info("Проверка <оператор_условный>")
 
     ## (
@@ -606,7 +606,7 @@ def opr_if(count):
 # [0,7] 14 [0,8] 7 [[0,9] 7] 13-19 [0,10]
 
 def opr_for(count):
-    ast_for=AST("for")
+    ast_for=AST("for", line=lst_lines[count-1])
     logging.info("Проверка <фиксированного_цикла>")
     ## <идентификатор>:=
     if lst_tokens[count][0]==2 and lst_tokens[count+1] == [1,18]:
@@ -713,7 +713,7 @@ def opr_for(count):
 # [0,11] [1,19] 7 [1,20] 13-19
 
 def opr_while(count):
-    ast_while=AST("while")
+    ast_while=AST("while", line=lst_lines[count-1])
     logging.info("Проверка <условного_цикла>")
 
     ## (

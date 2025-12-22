@@ -1,5 +1,6 @@
 
-{   a, c, b : %;
+{   a:=1;
+    a, a, c, b : %;
     x : !;
     flag : $;
     i: %;
@@ -20,16 +21,16 @@
 
     flag := true;
 
-    if (a EQ 1) begin
+    if (a plus 1) begin
         writeln c;
         x := ~~a
     end else begin
         writeln 0;
         flag := false
     end;
-    for i:=1 to 2 step 1 a:=2 next;
+    for i:=1.1 to 1.1 step 1.1 a:=21 next;
 
-    while (a EQ 1) a:=1;
+    while (a min 1) a:=1;
 
     x:=1.1E+2;
     readln a, b, c;
