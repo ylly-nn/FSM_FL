@@ -22,16 +22,16 @@ def print_ast(node, prefix="", is_last=True):
 
     branch = "└─ " if is_last else "├─ "
     if node.value is not None and node.ast_type is None:
-        print(prefix + branch + f"{node.kind}: {node.value}, {node.line}")
+        print(prefix + branch + f"{node.kind}: {node.value}")
 
     if node.value is not None and node.ast_type is not None:
-        print(prefix + branch + f"{node.kind}: {node.value} , {node.ast_type}, {node.line}")
+        print(prefix + branch + f"{node.kind}: {node.value}")
 
 
     
     if node.value is None:
         if node.ast_type is not None:
-            print(prefix + branch + f"{node.kind}, {node.ast_type}")
+            print(prefix + branch + f"{node.kind}")
         else:
             print(prefix + branch + f"{node.kind}")
 
@@ -138,7 +138,6 @@ def expression(node):
         ratio={}
         _ratio_id=0
         node.ast_type="$"
-        print(ratio)
 
         for child in node.children:
           
@@ -168,7 +167,8 @@ def operand(node):
             if child.kind!="sum":
                 child=addend(child)
                 if child.ast_type=="$":
-                    semantic_err.append("Строка:"+ str(child.line)+". Несовпадение типов для операции группы сложения:$")
+                    #semantic_err.append("Строка:"+ str(child.line)+". Несовпадение типов для операции группы сложения:$")
+                    l=1
                 else:
                     add_sum(child.ast_type)
         if "!" in sum.values():
@@ -225,7 +225,8 @@ def addend(node):
                 child=multiplicador(child)
                 
                 if child.ast_type=="$":
-                    semantic_err.append("Строка:"+ str(child.line)+". Несовпадение типов для операции группы умножения:$")
+                    #semantic_err.append("Строка:"+ str(child.line)+". Несовпадение типов для операции группы умножения:$")
+                    l=1
                 else:
                     add_mult(child.ast_type)
         if flag==1:
@@ -352,5 +353,5 @@ def semantic_analysis(ast_program):
 
     
 
-    print("AST")
-    print_ast(ast_program)
+    # print("AST")
+    # print_ast(ast_program)

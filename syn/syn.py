@@ -937,7 +937,7 @@ if not lst_err:
     # print("not error in lex")
     prorgam(0)
 
-if syntax_errors:
+if syntax_errors and not lst_err:
     print("❌ERRORS:")
 
     total = len(syntax_errors)-1
@@ -948,7 +948,7 @@ if syntax_errors:
         else:
             print(err)
             break
-else:
+elif not lst_err:
     print("===========================================")
     print("✅Syntactic analysis completed successfully")
     print("===========================================")
@@ -973,11 +973,11 @@ if not syntax_errors:
 
     semantic_analysis(ast_program)
 
-    if not semantic_err:
+    if not semantic_err and not lst_err and not syntax_errors:
         print("==========================================")
         print("✅Semantic analysis completed successfully")
         print("==========================================")
-    else:
+    elif not lst_err and not syntax_errors:
         print("❌ERRORS:")
         for err in semantic_err:
             print(err)

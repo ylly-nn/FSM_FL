@@ -1,40 +1,28 @@
+{
+    a, b, i : %;
+    x, y : !;
+    flag, ok : $;
+    
 
-{   a:=1;
-    a, a, c, b : %;
-    x : !;
-    flag : $;
-    i: %;
-
-    a:=(2);
-    flag:=3 NE true;
     readln a, b;
 
-    c := b plus x mult b plus 10;
-    writeln c;
+    x := a div 2;
+    y := (a mult b) plus 3.5;
 
-    c:=x;
+    ok := (a LT b);
 
-    a:=1.1;
-    x:=flag;
-
-    
-
-    flag := true;
-
-    if (a plus 1) begin
-        writeln c;
-        x := ~~a
+    if (flag) begin
+        writeln x, y;
+        flag := false
     end else begin
         writeln 0;
-        flag := false
+        flag := true
     end;
-    for i:=1.1 to 1.1 step 1.1 a:=21 next;
 
-    while (a min 1) a:=1;
+    for i := 0 to 10 step 2 begin
+        a := a plus i;
+        writeln a
+    end 
 
-    x:=1.1E+2;
-    readln a, b, c;
- 
-    
+    while (true) a:=b;
 }
-
